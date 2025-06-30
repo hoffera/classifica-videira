@@ -13,7 +13,6 @@ def carrega_modelo():
     url = 'https://drive.google.com/uc?id=1QTfOwuClf-9JOnBd239c0YVbjaqYAXLa'
     output = 'modelo_quantizado16bits.tflite'
 
-
     interpreter = tf.lite.Interpreter(model_path=output)
     interpreter.allocate_tensors()
 
