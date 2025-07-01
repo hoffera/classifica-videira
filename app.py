@@ -11,7 +11,7 @@ import os
 @st.cache_resource
 def carrega_modelo():
     url = 'https://drive.google.com/uc?id=1QTfOwuClf-9JOnBd239c0YVbjaqYAXLa'
-    output = 'modelo_quantizado16bits.tflite'
+    output = 'modelo_mosquitos.tflite'
 
     if not os.path.exists(output):
         gdown.download(url, output, quiet=False)
@@ -22,24 +22,6 @@ def carrega_modelo():
     interpreter = tf.lite.Interpreter(model_path=output)
     interpreter.allocate_tensors()
     return interpreter
-
-
-
-# def carrega_imagem():
-#     uploaded_file = st.file_uploader('Arraste e solte uma imagem aqui ou clique para selecionar uma', type=['png', 'jpg', 'jpeg'])
-
-#     if uploaded_file is not None:
-#         image_data = uploaded_file.read()
-#         image = Image.open(io.BytesIO(image_data))
-
-#         st.image(image)
-#         st.success('Imagem foi carregada com sucesso')
-
-#         image = np.array(image, dtype=np.float32)
-#         image = image / 255.0
-#         image = np.expand_dims(image, axis=0)
-
-#         return image
 
 def carrega_imagem():
     uploaded_file = st.file_uploader('Arraste e solte uma imagem aqui ou clique para selecionar uma', type=['png', 'jpg', 'jpeg'])
@@ -70,7 +52,12 @@ def previsao(interpreter, imagem):
     # DEBUG: veja se o modelo está retornando alguma coisa
     st.write("Saída do modelo:", output_data)
 
-    classes = ['BlackMeasles', 'BlackRot', 'HealthyGrapes', 'LeafBlight']
+    classes = ['Aedes  albopictus landing',
+    'Aedes aegypti landing',
+    'Aedes aegypti smashed',
+    'Aedes albopictus smashed',
+    'Culex quinquefasciatus landing',
+    'Culex quinquefasciatus smashed']
     df = pd.DataFrame()
     df['classes'] = classes
     df['probabilidades (%)'] = 100 * output_data[0]
@@ -81,19 +68,19 @@ def previsao(interpreter, imagem):
         x='probabilidades (%)',
         orientation='h',
         text='probabilidades (%)',
-        title='Probabilidade de Classes de Doenças em Uvas'
+        title='Probabilidade de Classes'
     )
 
-    st.plotly_chart(fig)  # <-- ESSENCIAL para exibir o gráfico
+    st.plotly_chart(fig)  
 
 def main():
     st.set_page_config(
-        page_title="Classifica Folhas de Videira",
-        page_icon="🍇",
+        page_title="Classifica mosquito na pele humana",
+        page_icon="🦟",
 
     )
 
-    st.write("# Classifica Folhas de Videira! 🍇")
+    st.write("# Classifica mosquito na pele humana! 🦟")
 
 
     #Carrega modelo
