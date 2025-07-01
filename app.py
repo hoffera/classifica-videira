@@ -23,22 +23,33 @@ def carrega_modelo():
     interpreter.allocate_tensors()
     return interpreter
 
-def carrega_imagem():
-    uploaded_file = st.file_uploader('Arraste e solte uma imagem aqui ou clique para selecionar uma', type=['png', 'jpg', 'jpeg'])
+def carrega_imagens():
+    uploaded_files = st.file_uploader(
+        'Arraste e solte **uma ou mais imagens** aqui ou clique para selecionar',
+        type=['png', 'jpg', 'jpeg'],
+        accept_multiple_files=True
+    )
 
-    if uploaded_file is not None:
-        image_data = uploaded_file.read()
-        image = Image.open(io.BytesIO(image_data)).convert("RGB")
+    imagens = []
+    nomes = []
 
-        image = image.resize((224, 224)) 
-        st.image(image)
-        st.success('Imagem foi carregada com sucesso')
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            image_data = uploaded_file.read()
+            image = Image.open(io.BytesIO(image_data)).convert("RGB")
+            image = image.resize((224, 224))
+            st.image(image, caption=uploaded_file.name, width=150)
 
-        image = np.array(image, dtype=np.float32)
-        image = image / 255.0
-        image = np.expand_dims(image, axis=0)  # (1, 224, 224, 3)
+            image_array = np.array(image, dtype=np.float32) / 255.0
+            image_array = np.expand_dims(image_array, axis=0)  # (1, 224, 224, 3)
 
-        return image
+            imagens.append(image_array)
+            nomes.append(uploaded_file.name)
+
+        st.success(f"{len(imagens)} imagem(ns) carregada(s) com sucesso")
+        return imagens, nomes
+
+    return None, None
 
 def previsao(interpreter, imagem):
     input_details = interpreter.get_input_details()
@@ -49,15 +60,15 @@ def previsao(interpreter, imagem):
 
     output_data = interpreter.get_tensor(output_details[0]['index'])
 
-    # DEBUG: veja se o modelo está retornando alguma coisa
-    st.write("Saída do modelo:", output_data)
+    classes = [
+        'Culex_landing',
+        'Culex_smashed',
+        'aegypti_landing',
+        'aegypti_smashed',
+        'albopictus_landing',
+        'albopictus_smashed'
+    ]
 
-    classes = ['Culex_landing',
-    'Culex_smashed',
-    'aegypti_landing',
-    'aegypti_smashed',
-    'albopictus_landing',
-    'albopictus_smashed']
     df = pd.DataFrame()
     df['classes'] = classes
     df['probabilidades (%)'] = 100 * output_data[0]
@@ -68,31 +79,31 @@ def previsao(interpreter, imagem):
         x='probabilidades (%)',
         orientation='h',
         text='probabilidades (%)',
-        title='Probabilidade de Classes'
+        title='Probabilidade por classe'
     )
+    fig.update_layout(yaxis=dict(categoryorder='total ascending'))
 
-    st.plotly_chart(fig)  
+    st.plotly_chart(fig)
 
 def main():
     st.set_page_config(
         page_title="Classifica mosquito na pele humana",
         page_icon="🦟",
-
     )
 
-    st.write("# Classifica mosquito na pele humana! 🦟")
+    st.title("Classifica mosquito na pele humana! 🦟")
 
-
-    #Carrega modelo
+    # Carrega modelo
     interpreter = carrega_modelo()
 
-    #Carrega imagem
-    image= carrega_imagem()
+    # Carrega imagens
+    imagens, nomes = carrega_imagens()
 
-    #Classifica
-    if image is not None:
-        
-        previsao(interpreter,image)
+    # Classifica
+    if imagens:
+        for imagem, nome in zip(imagens, nomes):
+            st.subheader(f"🖼️ Resultado para: {nome}")
+            previsao(interpreter, imagem)
 
 if __name__ == "__main__":
     main()
