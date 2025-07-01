@@ -6,16 +6,21 @@ from PIL import Image
 import numpy as np
 import pandas as pd
 import plotly.express as px
-
+import os
 
 @st.cache_resource
 def carrega_modelo():
     url = 'https://drive.google.com/uc?id=1QTfOwuClf-9JOnBd239c0YVbjaqYAXLa'
     output = 'modelo_quantizado16bits.tflite'
 
+    if not os.path.exists(output):
+        gdown.download(url, output, quiet=False)
+
+    if not os.path.exists(output):
+        raise FileNotFoundError(f"Arquivo {output} não encontrado após download.")
+
     interpreter = tf.lite.Interpreter(model_path=output)
     interpreter.allocate_tensors()
-
     return interpreter
 
 
