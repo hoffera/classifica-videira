@@ -74,12 +74,11 @@ def main():
     interpreter = carrega_modelo()
 
     #Carrega imagem
-    image= carrega_imagem()
+    image = carrega_imagem()
 
     #Classifica
-    if image is not None:
-        
-        previsao(interpreter,image)
+ 
+    previsao(interpreter,image)
 
 if __name__ == "__main__":
     main()
