@@ -48,13 +48,13 @@ def carrega_imagem():
         image_data = uploaded_file.read()
         image = Image.open(io.BytesIO(image_data)).convert("RGB")
 
-        image = image.resize((224, 224))  # 🔁 Use o tamanho correto do seu modelo
+        image = image.resize((256, 256)) 
         st.image(image)
         st.success('Imagem foi carregada com sucesso')
 
         image = np.array(image, dtype=np.float32)
         image = image / 255.0
-        image = np.expand_dims(image, axis=0)  # Fica (1, 224, 224, 3)
+        image = np.expand_dims(image, axis=0)  # (1, 256, 256, 3)
 
         return image
 
