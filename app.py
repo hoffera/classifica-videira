@@ -25,19 +25,36 @@ def carrega_modelo():
 
 
 
+# def carrega_imagem():
+#     uploaded_file = st.file_uploader('Arraste e solte uma imagem aqui ou clique para selecionar uma', type=['png', 'jpg', 'jpeg'])
+
+#     if uploaded_file is not None:
+#         image_data = uploaded_file.read()
+#         image = Image.open(io.BytesIO(image_data))
+
+#         st.image(image)
+#         st.success('Imagem foi carregada com sucesso')
+
+#         image = np.array(image, dtype=np.float32)
+#         image = image / 255.0
+#         image = np.expand_dims(image, axis=0)
+
+#         return image
+
 def carrega_imagem():
     uploaded_file = st.file_uploader('Arraste e solte uma imagem aqui ou clique para selecionar uma', type=['png', 'jpg', 'jpeg'])
 
     if uploaded_file is not None:
         image_data = uploaded_file.read()
-        image = Image.open(io.BytesIO(image_data))
+        image = Image.open(io.BytesIO(image_data)).convert("RGB")
 
+        image = image.resize((224, 224))  # 🔁 Use o tamanho correto do seu modelo
         st.image(image)
         st.success('Imagem foi carregada com sucesso')
 
         image = np.array(image, dtype=np.float32)
         image = image / 255.0
-        image = np.expand_dims(image, axis=0)
+        image = np.expand_dims(image, axis=0)  # Fica (1, 224, 224, 3)
 
         return image
 
@@ -74,11 +91,12 @@ def main():
     interpreter = carrega_modelo()
 
     #Carrega imagem
-    image = carrega_imagem()
+    image= carrega_imagem()
 
     #Classifica
- 
-    previsao(interpreter,image)
+    if image is not None:
+        
+        previsao(interpreter,image)
 
 if __name__ == "__main__":
     main()
