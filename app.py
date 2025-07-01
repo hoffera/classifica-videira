@@ -10,7 +10,7 @@ import os
 
 @st.cache_resource
 def carrega_modelo():
-    url = 'https://drive.google.com/uc?id=1QTfOwuClf-9JOnBd239c0YVbjaqYAXLa'
+    url = 'https://drive.google.com/uc?id=13q14tlNUio1yoiMvXHQMBs9x9HrnfmJY'
     output = 'modelo_mosquitos.tflite'
 
     if not os.path.exists(output):
