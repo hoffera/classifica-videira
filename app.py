@@ -58,24 +58,33 @@ def carrega_imagem():
 
         return image
 
-def previsao(interpreter,imagem):
-
+def previsao(interpreter, imagem):
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
-    
-    interpreter.set_tensor(input_details[0]['index'],imagem) 
-    
+
+    interpreter.set_tensor(input_details[0]['index'], imagem)
     interpreter.invoke()
 
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    classes = ['BlackMeasles', 'BlackRot', 'HealthyGrapes', 'LeafBlight']
 
-    
+    # DEBUG: veja se o modelo está retornando alguma coisa
+    st.write("Saída do modelo:", output_data)
+
+    classes = ['BlackMeasles', 'BlackRot', 'HealthyGrapes', 'LeafBlight']
     df = pd.DataFrame()
     df['classes'] = classes
-    df['probabilidades (%)'] = 100*output_data[0]
-    
-    fig = px.bar(df,y='classes',x='probabilidades (%)',  orientation='h', text='probabilidades (%)', title='Probabilidade de Classes de Doenças em Uvas')
+    df['probabilidades (%)'] = 100 * output_data[0]
+
+    fig = px.bar(
+        df,
+        y='classes',
+        x='probabilidades (%)',
+        orientation='h',
+        text='probabilidades (%)',
+        title='Probabilidade de Classes de Doenças em Uvas'
+    )
+
+    st.plotly_chart(fig)  # <-- ESSENCIAL para exibir o gráfico
 
 def main():
     st.set_page_config(
