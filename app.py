@@ -52,12 +52,12 @@ def previsao(interpreter, imagem):
     # DEBUG: veja se o modelo está retornando alguma coisa
     st.write("Saída do modelo:", output_data)
 
-    classes = ['Aedes_aegypti_landing',
-    'Aedes_aegypti_smashed',
-    'Aedes_albopictus_landing',
-    'Aedes_albopictus_smashed',
-    'Culex_quinquefasciatus_landing',
-    'Culex_quinquefasciatus_smashed']
+    classes = ['Culex_landing',
+    'Culex_smashed',
+    'aegypti_landing',
+    'aegypti_smashed',
+    'albopictus_landing',
+    'albopictus_smashed']
     df = pd.DataFrame()
     df['classes'] = classes
     df['probabilidades (%)'] = 100 * output_data[0]
