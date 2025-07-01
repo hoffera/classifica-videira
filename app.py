@@ -10,8 +10,8 @@ import os
 
 @st.cache_resource
 def carrega_modelo():
-    url = 'https://drive.google.com/uc?id=13q14tlNUio1yoiMvXHQMBs9x9HrnfmJY'
-    output = 'modelo_mosquitos.tflite'
+    url = 'https://drive.google.com/uc?id=1w5doSoVqMcmMIdGHgrVlGeoDvmHxZtYL'
+    output = 'modelo_mosquito_final.tflite'
 
     if not os.path.exists(output):
         gdown.download(url, output, quiet=False)
